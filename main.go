@@ -8,6 +8,7 @@ import (
 	"image"
 	"image/color"
 	"log"
+	"math"
 )
 
 const screenWidth = 512
@@ -17,6 +18,10 @@ var emptyImage = ebiten.NewImage(3, 3)
 
 func init() {
 	emptyImage.Fill(color.White)
+}
+
+func vecLength( x float64,  y float64 ) float64 {
+     return math.Sqrt( x*x+y*y )
 }
 
 func (g *Game) handleMovement() {
@@ -31,8 +36,9 @@ func (g *Game) handleMovement() {
 		g.targety = float64(ty)
 	}
 	if inpututil.IsMouseButtonJustReleased(ebiten.MouseButtonLeft) {
-		g.speedx = (g.targetx - g.ballx) / 30.0
-		g.speedy = (g.targety - g.bally) / 30.0
+                l := vecLength( g.targetx - g.ballx, g.targety - g.bally )
+		g.speedx = (g.targetx - g.ballx) / l * 5
+		g.speedy = (g.targety - g.bally) / l * 5
 		//		g.ballx = float64(tx)
 		//		g.bally = float64(ty)
 		g.positioning = false
