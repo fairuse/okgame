@@ -121,13 +121,15 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		v, i := dotline(float64(g.ballx), float64(g.bally), float64(g.targetx), float64(g.targety), color.RGBA{0x80, 0x40, 0xa0, 0xff})
 		screen.DrawTriangles(v, i, src, nil)
 
-		polygon := makeNGon(Point{x: screenWidth / 2.0, y: screenHeight / 2.0}, 50.0, 5)
+		// polygon := makeNGon(Point{x: screenWidth / 2.0, y: screenHeight / 2.0}, 50.0, 5)
 
-		v, i = render(polygon, color.RGBA{0xff, 0xff, 0xff, 0xff})
-		screen.DrawTriangles(v, i, src, nil)
+		// v, i = render(polygon, color.RGBA{0xff, 0xff, 0xff, 0xff})
+		// screen.DrawTriangles(v, i, src, nil)
 
-		interp := intersectPolygonNorm(Point{x: g.ballx, y: g.bally}, Point{x: g.targetx, y: g.targety},
-			polygon) // Point{x:screenWidth/2.0, y:0}, Point{x:screenWidth/2.0,y:screenHeight} )
+		interp, _ := level.findHit(Point{x: g.ballx, y: g.bally}, Point{x: g.targetx, y: g.targety})
+
+		//interp := intersectPolygonNorm(Point{x: g.ballx, y: g.bally}, Point{x: g.targetx, y: g.targety},
+		//	polygon) // Point{x:screenWidth/2.0, y:0}, Point{x:screenWidth/2.0,y:screenHeight} )
 		if interp != nil {
 			v, i := ball(interp.src.x, interp.src.y, color.RGBA{0xff, 0x00, 0xff, 0xff})
 			screen.DrawTriangles(v, i, src, nil)
