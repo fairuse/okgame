@@ -21,13 +21,13 @@ var level Level
 func init() {
 	emptyImage.Fill(color.White)
 	level = Level{}
-	polygon := makeNGon(Point{x: screenWidth / 2.0, y: screenHeight / 2.0}, 50.0, 5)
+	polygon := makeNGon(Point{x: screenWidth / 2.0, y: screenHeight / 2.0}, 50.0, 100)
 	level.add(Obstacle{geom: polygon, enabled: true, color: color.RGBA{255, 255, 0, 255}})
 
-	polygon = makeNGon(Point{x: screenWidth / 4.0, y: screenHeight / 2.0}, 20.0, 6)
+	polygon = makeNGon(Point{x: screenWidth / 4.0, y: screenHeight / 2.0}, 20.0, 64)
 	level.add(Obstacle{geom: polygon, enabled: true, color: color.RGBA{255, 255, 0, 255}})
 
-	for i := 0.0; i < 2*3.1415; i += 0.1 {
+	for i := 0.0; i < 2*3.1415; i += 0.4 {
 		polygon = makeNGon(Point{x: screenWidth * (0.5 + 0.4*math.Sin(i)), y: screenHeight * (0.5 + 0.4*math.Cos(i))}, 15.0, 4)
 		level.add(Obstacle{geom: polygon, enabled: true, color: color.RGBA{255, 255, 0, 255}})
 	}
@@ -118,6 +118,7 @@ type Game struct {
 	targetx, targety float64
 	speedx, speedy   float64
 	positioning      bool
+	trail		 []Point
 	//        objects  []object
 }
 
@@ -141,6 +142,17 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 	if true {
 		v, i := level.draw()
+		screen.DrawTriangles(v, i, src, nil)
+	}
+
+	g.trail = append(g.trail, Point{g.ballx,g.bally})
+	const maxtrail = 100
+	if len(g.trail)>maxtrail {
+		g.trail = g.trail[len(g.trail)-maxtrail:]
+	}
+	for nr,trailpos := range(g.trail) {
+		polygon := makeNGon(trailpos, 5.0 * float64(nr) / float64(maxtrail+1), 4)
+		v, i := render(polygon, color.RGBA{0xff, 0xff, 0xff, uint8( 0xa0 * nr / maxtrail) })
 		screen.DrawTriangles(v, i, src, nil)
 	}
 
@@ -181,6 +193,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 		v, i = ball(float64(g.targetx), float64(g.targety), color.RGBA{0xa0, 0xa0, 0xa0, 0xff})
 		screen.DrawTriangles(v, i, src, nil)
+
 	}
 
 	v, i := ball(float64(g.ballx), float64(g.bally), color.RGBA{0xff, 0xff, 0xff, 0xff})

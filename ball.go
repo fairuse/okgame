@@ -99,7 +99,7 @@ func dotline(sx float64, sy float64, tx float64, ty float64, col color.RGBA) (ve
 
 func ball(px float64, py float64, col color.RGBA) (vertices []ebiten.Vertex, indices []uint16) {
 	const MAXSEG = 64
-	const r = 10.0
+	const r = 4.0
 
 	vertices = make([]ebiten.Vertex, 3*MAXSEG)
 	indices = make([]uint16, 3*MAXSEG)
@@ -117,8 +117,8 @@ func ball(px float64, py float64, col color.RGBA) (vertices []ebiten.Vertex, ind
 		dyn := math.Cos(float64(segment+1)*2.0*math.Pi/MAXSEG) * r
 
 		vertices[segment*3+0] = ebiten.Vertex{DstX: float32(px), DstY: float32(py), SrcX: 1, SrcY: 1, ColorR: cr, ColorG: cg, ColorB: cb, ColorA: ca}
-		vertices[segment*3+1] = ebiten.Vertex{DstX: float32(px + dx), DstY: float32(py + dy), SrcX: 1, SrcY: 1, ColorR: cr, ColorG: cg, ColorB: cb, ColorA: ca}
-		vertices[segment*3+2] = ebiten.Vertex{DstX: float32(px + dxn), DstY: float32(py + dyn), SrcX: 1, SrcY: 1, ColorR: cr, ColorG: cg, ColorB: cb, ColorA: ca}
+		vertices[segment*3+1] = ebiten.Vertex{DstX: float32(px + dx), DstY: float32(py + dy), SrcX: 1, SrcY: 1, ColorR: cr, ColorG: cg, ColorB: cb, ColorA: 0}
+		vertices[segment*3+2] = ebiten.Vertex{DstX: float32(px + dxn), DstY: float32(py + dyn), SrcX: 1, SrcY: 1, ColorR: cr, ColorG: cg, ColorB: cb, ColorA: 0}
 
 		indices[segment*3+0] = segment*3 + 0
 		indices[segment*3+1] = segment*3 + 1
