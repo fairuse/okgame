@@ -142,7 +142,6 @@ func intersection(p1 Point, p2 Point, p3 Point, p4 Point) *Point {
 
 	// fmt.Println(pre,post,x,y)
 
-
 	// Check if the x and y coordinates are within both lines
 	if x < math.Min(p1.x, p2.x)-epsilon || x > math.Max(p1.x, p2.x)+epsilon || x < math.Min(p3.x, p4.x)-epsilon || x > math.Max(p3.x, p4.x)+epsilon {
 		return nil

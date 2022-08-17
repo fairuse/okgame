@@ -14,6 +14,9 @@ func (l *Level) draw() (vertices []ebiten.Vertex, indices []uint16) {
 	v := make([]ebiten.Vertex, 0)
 	i := make([]uint16, 0)
 	for _, obj := range l.obstacles {
+		if obj.enabled == false {
+			continue
+		}
 		ov, oi := obj.draw()
 		vlen := uint16(len(v))
 		ilen := len(i)
@@ -33,16 +36,19 @@ func (l *Level) add(o Obstacle) {
 func (l *Level) findHit(ball Point, direction Point) (*Line, *Obstacle) {
 	var hitInfo *Line // src = hit point, dst = normal direction
 	var hitObj *Obstacle
-	for _, obj := range l.obstacles {
+	for nr, obj := range l.obstacles {
+		if obj.enabled == false {
+			continue
+		}
 		interp := intersectPolygonNorm(ball, direction, obj.geom)
 		if interp != nil {
 			if hitInfo == nil {
 				hitInfo = interp
-				hitObj = &obj
+				hitObj = &l.obstacles[nr]
 			} else {
-				if distance(ball,hitInfo.src) > distance(ball,interp.src) {
+				if distance(ball, hitInfo.src) > distance(ball, interp.src) {
 					hitInfo = interp
-					hitObj = &obj
+					hitObj = &l.obstacles[nr]
 				}
 			}
 		}

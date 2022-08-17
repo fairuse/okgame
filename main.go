@@ -27,8 +27,10 @@ func init() {
 	polygon = makeNGon(Point{x: screenWidth / 4.0, y: screenHeight / 2.0}, 20.0, 6)
 	level.add(Obstacle{geom: polygon, enabled: true, color: color.RGBA{255, 255, 0, 255}})
 
-	polygon = makeNGon(Point{x: screenWidth * 0.2, y: screenHeight * 0.8}, 120.0, 7)
-	level.add(Obstacle{geom: polygon, enabled: true, color: color.RGBA{255, 255, 0, 255}})
+	for i := 0.0; i < 2*3.1415; i += 0.1 {
+		polygon = makeNGon(Point{x: screenWidth * (0.5 + 0.4*math.Sin(i)), y: screenHeight * (0.5 + 0.4*math.Cos(i))}, 15.0, 4)
+		level.add(Obstacle{geom: polygon, enabled: true, color: color.RGBA{255, 255, 0, 255}})
+	}
 	//fmt.Println("LEVEL",level)
 	//v,i := level.draw()
 	//fmt.Println(v)
@@ -69,8 +71,30 @@ func (g *Game) handleMovement() {
 
 	if !g.positioning {
 		// fmt.Println(g.ballx, g.bally, g.speedx, g.speedy)
+		oldPos := Point{g.ballx, g.bally}
+
 		g.ballx += g.speedx
 		g.bally += g.speedy
+
+		newPos := Point{g.ballx, g.bally}
+
+		interp, obj := level.findHit(oldPos, newPos)
+
+		//interp := intersectPolygonNorm(Point{x: g.ballx, y: g.bally}, Point{x: g.targetx, y: g.targety},
+		//	polygon) // Point{x:screenWidth/2.0, y:0}, Point{x:screenWidth/2.0,y:screenHeight} )
+		if interp != nil {
+			obj.enabled = false
+			// traveled := interp.src.sub(oldPos).length() // distance traveled before hit
+			newdir := interp.src.sub(oldPos).reflect(interp.dst).normalized().mul(5.0)
+
+			// newtarget := interp.src.add(newdir.normalized().mul(screenWidth+screenHeight))
+			newball := interp.src.add(newdir.mul(epsilon))
+
+			g.ballx = newball.x
+			g.bally = newball.y
+			g.speedx = newdir.x
+			g.speedy = newdir.y
+		}
 
 		if g.ballx > screenWidth && g.speedx > 0 {
 			g.speedx *= -1
@@ -144,7 +168,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 			v, i = dotline(float64(interp.src.x), float64(interp.src.y), float64(interp.src.x+newdir.x), float64(interp.src.y+newdir.y), color.RGBA{0x0, 0x80, 0xa0, 0xff})
 			screen.DrawTriangles(v, i, src, nil)
 
-			newtarget := interp.src.add(newdir.normalized().mul(screenWidth+screenHeight))
+			newtarget := interp.src.add(newdir.normalized().mul(screenWidth + screenHeight))
 			newball := interp.src.add(newdir.mul(epsilon))
 
 			interp, _ := level.findHit(newball, newtarget)
@@ -159,7 +183,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		screen.DrawTriangles(v, i, src, nil)
 	}
 
-	v, i := ball(float64(g.ballx), float64(g.bally), color.RGBA{0xff, 0xff, 0, 0xff})
+	v, i := ball(float64(g.ballx), float64(g.bally), color.RGBA{0xff, 0xff, 0xff, 0xff})
 	screen.DrawTriangles(v, i, src, nil)
 
 	ebitenutil.DebugPrintAt(screen, "Click and drag to launch ball", 0, 0)
