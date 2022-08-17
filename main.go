@@ -26,6 +26,9 @@ func init() {
 
 	polygon = makeNGon(Point{x: screenWidth / 4.0, y: screenHeight / 2.0}, 20.0, 6)
 	level.add(Obstacle{geom: polygon, enabled: true, color: color.RGBA{255, 255, 0, 255}})
+
+	polygon = makeNGon(Point{x: screenWidth * 0.2, y: screenHeight * 0.8}, 120.0, 7)
+	level.add(Obstacle{geom: polygon, enabled: true, color: color.RGBA{255, 255, 0, 255}})
 	//fmt.Println("LEVEL",level)
 	//v,i := level.draw()
 	//fmt.Println(v)
@@ -141,7 +144,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 			v, i = dotline(float64(interp.src.x), float64(interp.src.y), float64(interp.src.x+newdir.x), float64(interp.src.y+newdir.y), color.RGBA{0x0, 0x80, 0xa0, 0xff})
 			screen.DrawTriangles(v, i, src, nil)
 
-			newtarget := interp.src.add(newdir)
+			newtarget := interp.src.add(newdir.normalized().mul(screenWidth+screenHeight))
 			newball := interp.src.add(newdir.mul(epsilon))
 
 			interp, _ := level.findHit(newball, newtarget)
