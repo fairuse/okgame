@@ -104,7 +104,11 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		v, i := dotline(float64(g.ballx), float64(g.bally), float64(g.targetx), float64(g.targety), color.RGBA{0x80, 0x40, 0xa0, 0xff})
 		screen.DrawTriangles(v, i, src, nil)
 
-		polygon := makeNGon( Point{x:screenWidth/2.0, y:screenHeight/2.0 }, 50.0, 8 )
+		polygon := makeNGon( Point{x:screenWidth/2.0, y:screenHeight/2.0 }, 50.0, 3 )
+
+		v, i = render(polygon, color.RGBA{0xff,0xff,0xff,0xff})
+		screen.DrawTriangles(v, i, src, nil)
+
 		interp := intersectPolygonNorm(Point{x:g.ballx, y:g.bally}, Point{x:g.targetx,y:g.targety},
 				      polygon )  // Point{x:screenWidth/2.0, y:0}, Point{x:screenWidth/2.0,y:screenHeight} )
 		if interp != nil {
@@ -114,6 +118,9 @@ func (g *Game) Draw(screen *ebiten.Image) {
 			v, i = dotline(float64(interp.src.x), float64(interp.src.y), float64(interp.src.x+15.0*interp.dst.x), float64(interp.src.y+15.0*interp.dst.y), color.RGBA{0x0, 0x40, 0xa0, 0xff})
 			screen.DrawTriangles(v, i, src, nil)
 
+			newdir := interp.src.sub(Point{g.ballx,g.bally}).reflect(interp.dst)
+			v, i = dotline(float64(interp.src.x), float64(interp.src.y), float64(interp.src.x+newdir.x), float64(interp.src.y+newdir.y), color.RGBA{0x0, 0x80, 0xa0, 0xff})
+			screen.DrawTriangles(v, i, src, nil)
 		}
 
 		v, i = ball(float64(g.targetx), float64(g.targety), color.RGBA{0xa0, 0xa0, 0xa0, 0xff})

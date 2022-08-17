@@ -7,6 +7,30 @@ import (
 	"math"
 )
 
+func render(p Polygon, col color.RGBA) (vertices []ebiten.Vertex, indices []uint16) {
+	cr := float32(col.R) / 0xff
+	cg := float32(col.G) / 0xff
+	cb := float32(col.B) / 0xff
+	ca := float32(col.A) / 0xff
+
+	vertices = make([]ebiten.Vertex, len(p.pts))
+	indices = make([]uint16, 3*len(p.pts))
+	for i:=0; i<len(p.pts); i++ {
+		indices[i*3+0] = uint16(i)
+		indices[i*3+1] = uint16((i+1)%len(p.pts))
+		indices[i*3+2] = uint16(0)
+		vertices[i] = ebiten.Vertex{ DstX: float32(p.pts[i].x),
+					     DstY: float32(p.pts[i].y),
+					     SrcX: 1,
+					     SrcY: 1,
+					     ColorR: cr,
+					     ColorG: cg,
+					     ColorB: cb,
+					     ColorA: ca }
+	}
+	return vertices, indices
+}
+
 func line(sx float64, sy float64, tx float64, ty float64, col color.RGBA) (vertices []ebiten.Vertex, indices []uint16) {
 	vertices = make([]ebiten.Vertex, 4)
 	indices = []uint16{0, 1, 3, 1, 2, 3}
