@@ -20,8 +20,8 @@ func init() {
 	emptyImage.Fill(color.White)
 }
 
-func vecLength( x float64,  y float64 ) float64 {
-     return math.Sqrt( x*x+y*y )
+func vecLength(x float64, y float64) float64 {
+	return math.Sqrt(x*x + y*y)
 }
 
 func (g *Game) handleMovement() {
@@ -34,9 +34,17 @@ func (g *Game) handleMovement() {
 	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
 		g.targetx = float64(tx)
 		g.targety = float64(ty)
+
+		// snapping
+		if math.Abs(g.targetx - g.ballx) < 10 {
+			g.targetx = g.ballx
+		}
+		if math.Abs(g.targety - g.bally) < 10 {
+			g.targety = g.bally
+		}
 	}
 	if inpututil.IsMouseButtonJustReleased(ebiten.MouseButtonLeft) {
-                l := vecLength( g.targetx - g.ballx, g.targety - g.bally )
+		l := vecLength(g.targetx-g.ballx, g.targety-g.bally)
 		g.speedx = (g.targetx - g.ballx) / l * 5
 		g.speedy = (g.targety - g.bally) / l * 5
 		//		g.ballx = float64(tx)
@@ -89,10 +97,11 @@ func (g *Game) Update() error {
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
+	screen.Fill( color.RGBA{0x30,0x30,0x50,0xff})
 	src := emptyImage.SubImage(image.Rect(1, 1, 2, 2)).(*ebiten.Image)
 
 	if g.positioning {
-		v, i := line(float64(g.ballx), float64(g.bally), float64(g.targetx), float64(g.targety), color.RGBA{0x40, 0x00, 0x80, 0xff})
+		v, i := dotline(float64(g.ballx), float64(g.bally), float64(g.targetx), float64(g.targety), color.RGBA{0x80, 0x40, 0xa0, 0xff})
 		screen.DrawTriangles(v, i, src, nil)
 		v, i = ball(float64(g.targetx), float64(g.targety), color.RGBA{0xa0, 0xa0, 0xa0, 0xff})
 		screen.DrawTriangles(v, i, src, nil)
@@ -118,6 +127,7 @@ func main() {
 	}
 
 	ebiten.SetWindowSize(screenWidth, screenHeight)
+        ebiten.SetFullscreen(true)
 	ebiten.SetWindowTitle("Ray casting and shadows (Ebiten demo)")
 	if err := ebiten.RunGame(g); err != nil {
 		log.Fatal(err)
