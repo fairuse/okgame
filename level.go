@@ -10,6 +10,12 @@ type Level struct {
 	obstacles  []Obstacle
 }
 
+func (l *Level) enableAll() {
+	for nr, _ := range l.obstacles {
+		l.obstacles[nr].enabled = true
+	}
+}
+
 func (l *Level) draw() (vertices []ebiten.Vertex, indices []uint16) {
 	v := make([]ebiten.Vertex, 0)
 	i := make([]uint16, 0)

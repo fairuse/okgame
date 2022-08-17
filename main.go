@@ -21,14 +21,17 @@ var level Level
 func init() {
 	emptyImage.Fill(color.White)
 	level = Level{}
-	polygon := makeNGon(Point{x: screenWidth / 2.0, y: screenHeight / 2.0}, 50.0, 100)
-	level.add(Obstacle{geom: polygon, enabled: true, color: color.RGBA{255, 255, 0, 255}})
+	// polygon := makeNGon(Point{x: screenWidth / 2.0, y: screenHeight / 2.0}, 100.0, 100)
+	// level.add(Obstacle{geom: polygon, enabled: true, color: color.RGBA{255, 255, 0, 255}})
 
-	polygon = makeNGon(Point{x: screenWidth / 4.0, y: screenHeight / 2.0}, 20.0, 64)
-	level.add(Obstacle{geom: polygon, enabled: true, color: color.RGBA{255, 255, 0, 255}})
+	for nr:=0; nr<10; nr++ {
+		polygon := makeNGon(Point{x: screenWidth / 2.0, y: screenHeight / 2.0}, 100 - 5.0 * float64(nr), 100)
+		level.add(Obstacle{geom: polygon, enabled: true, color: color.RGBA{uint8(255-nr*15), uint8(255-nr*20), 0, 255}})
+	}
+
 
 	for i := 0.0; i < 2*3.1415; i += 0.4 {
-		polygon = makeNGon(Point{x: screenWidth * (0.5 + 0.4*math.Sin(i)), y: screenHeight * (0.5 + 0.4*math.Cos(i))}, 15.0, 4)
+		polygon := makeNGon(Point{x: screenWidth * (0.5 + 0.4*math.Sin(i)), y: screenHeight * (0.5 + 0.4*math.Cos(i))}, 15.0, 4)
 		level.add(Obstacle{geom: polygon, enabled: true, color: color.RGBA{255, 255, 0, 255}})
 	}
 	//fmt.Println("LEVEL",level)
@@ -47,6 +50,7 @@ func (g *Game) handleMovement() {
 		g.ballx = float64(tx)
 		g.bally = float64(ty)
 		g.positioning = true
+		level.enableAll()
 	}
 	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
 		g.targetx = float64(tx)
@@ -64,6 +68,10 @@ func (g *Game) handleMovement() {
 		l := vecLength(g.targetx-g.ballx, g.targety-g.bally)
 		g.speedx = (g.targetx - g.ballx) / l * 5
 		g.speedy = (g.targety - g.bally) / l * 5
+		if l == 0 {
+			g.speedx = 0
+			g.speedy = 0
+		}
 		//		g.ballx = float64(tx)
 		//		g.bally = float64(ty)
 		g.positioning = false
