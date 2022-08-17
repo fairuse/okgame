@@ -1,4 +1,4 @@
 #!/bin/bash
-set -ex\
+set -ex
 GOOS=js GOARCH=wasm go build -o main.wasm
 
