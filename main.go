@@ -105,10 +105,13 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		screen.DrawTriangles(v, i, src, nil)
 
 		polygon := makeNGon( Point{x:screenWidth/2.0, y:screenHeight/2.0 }, 50.0, 8 )
-		interp := intersectPolygon(Point{x:g.ballx, y:g.bally}, Point{x:g.targetx,y:g.targety},
+		interp := intersectPolygonNorm(Point{x:g.ballx, y:g.bally}, Point{x:g.targetx,y:g.targety},
 				      polygon )  // Point{x:screenWidth/2.0, y:0}, Point{x:screenWidth/2.0,y:screenHeight} )
 		if interp != nil {
-			v, i := ball(interp.x, interp.y, color.RGBA{0xff,0x00,0xff,0xff})
+			v, i := ball(interp.src.x, interp.src.y, color.RGBA{0xff,0x00,0xff,0xff})
+			screen.DrawTriangles(v, i, src, nil)
+
+			v, i = dotline(float64(interp.src.x), float64(interp.src.y), float64(interp.src.x+15.0*interp.dst.x), float64(interp.src.y+15.0*interp.dst.y), color.RGBA{0x0, 0x40, 0xa0, 0xff})
 			screen.DrawTriangles(v, i, src, nil)
 
 		}
