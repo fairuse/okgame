@@ -104,7 +104,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		v, i := dotline(float64(g.ballx), float64(g.bally), float64(g.targetx), float64(g.targety), color.RGBA{0x80, 0x40, 0xa0, 0xff})
 		screen.DrawTriangles(v, i, src, nil)
 
-		polygon := makeNGon( Point{x:screenWidth/2.0, y:screenHeight/2.0 }, 50.0, 3 )
+		polygon := makeNGon( Point{x:screenWidth/2.0, y:screenHeight/2.0 }, 50.0, 5 )
 
 		v, i = render(polygon, color.RGBA{0xff,0xff,0xff,0xff})
 		screen.DrawTriangles(v, i, src, nil)
