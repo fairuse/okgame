@@ -15,18 +15,18 @@ func render(p Polygon, col color.RGBA) (vertices []ebiten.Vertex, indices []uint
 
 	vertices = make([]ebiten.Vertex, len(p.pts))
 	indices = make([]uint16, 3*len(p.pts))
-	for i:=0; i<len(p.pts); i++ {
+	for i := 0; i < len(p.pts); i++ {
 		indices[i*3+0] = uint16(i)
-		indices[i*3+1] = uint16((i+1)%len(p.pts))
+		indices[i*3+1] = uint16((i + 1) % len(p.pts))
 		indices[i*3+2] = uint16(0)
-		vertices[i] = ebiten.Vertex{ DstX: float32(p.pts[i].x),
-					     DstY: float32(p.pts[i].y),
-					     SrcX: 1,
-					     SrcY: 1,
-					     ColorR: cr,
-					     ColorG: cg,
-					     ColorB: cb,
-					     ColorA: ca }
+		vertices[i] = ebiten.Vertex{DstX: float32(p.pts[i].x),
+			DstY:   float32(p.pts[i].y),
+			SrcX:   1,
+			SrcY:   1,
+			ColorR: cr,
+			ColorG: cg,
+			ColorB: cb,
+			ColorA: ca}
 	}
 	return vertices, indices
 }

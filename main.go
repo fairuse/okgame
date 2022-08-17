@@ -8,6 +8,7 @@ import (
 	"image"
 	"image/color"
 	"log"
+//	"fmt"
 	"math"
 )
 
@@ -15,9 +16,20 @@ const screenWidth = 768
 const screenHeight = 512
 
 var emptyImage = ebiten.NewImage(3, 3)
+var level Level
 
 func init() {
 	emptyImage.Fill(color.White)
+	level = Level{}
+	polygon := makeNGon(Point{x: screenWidth / 2.0, y: screenHeight / 2.0}, 50.0, 5)
+	level.add(Obstacle{geom:polygon,enabled:true,color:color.RGBA{255,255,0,255} })
+
+	polygon = makeNGon(Point{x: screenWidth / 4.0, y: screenHeight / 2.0}, 20.0, 6)
+	level.add(Obstacle{geom:polygon,enabled:true,color:color.RGBA{255,255,0,255} })
+	//fmt.Println("LEVEL",level)
+	//v,i := level.draw()
+	//fmt.Println(v)
+	//fmt.Println(i)
 }
 
 func vecLength(x float64, y float64) float64 {
@@ -36,10 +48,10 @@ func (g *Game) handleMovement() {
 		g.targety = float64(ty)
 
 		// snapping
-		if math.Abs(g.targetx - g.ballx) < 10 {
+		if math.Abs(g.targetx-g.ballx) < 10 {
 			g.targetx = g.ballx
 		}
-		if math.Abs(g.targety - g.bally) < 10 {
+		if math.Abs(g.targety-g.bally) < 10 {
 			g.targety = g.bally
 		}
 	}
@@ -97,28 +109,33 @@ func (g *Game) Update() error {
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
-	screen.Fill( color.RGBA{0x30,0x30,0x50,0xff})
+	screen.Fill(color.RGBA{0x30, 0x30, 0x50, 0xff})
 	src := emptyImage.SubImage(image.Rect(1, 1, 2, 2)).(*ebiten.Image)
+
+	if true {
+		v,i := level.draw()
+		screen.DrawTriangles(v, i, src, nil)
+	}
 
 	if g.positioning {
 		v, i := dotline(float64(g.ballx), float64(g.bally), float64(g.targetx), float64(g.targety), color.RGBA{0x80, 0x40, 0xa0, 0xff})
 		screen.DrawTriangles(v, i, src, nil)
 
-		polygon := makeNGon( Point{x:screenWidth/2.0, y:screenHeight/2.0 }, 50.0, 5 )
+		polygon := makeNGon(Point{x: screenWidth / 2.0, y: screenHeight / 2.0}, 50.0, 5)
 
-		v, i = render(polygon, color.RGBA{0xff,0xff,0xff,0xff})
+		v, i = render(polygon, color.RGBA{0xff, 0xff, 0xff, 0xff})
 		screen.DrawTriangles(v, i, src, nil)
 
-		interp := intersectPolygonNorm(Point{x:g.ballx, y:g.bally}, Point{x:g.targetx,y:g.targety},
-				      polygon )  // Point{x:screenWidth/2.0, y:0}, Point{x:screenWidth/2.0,y:screenHeight} )
+		interp := intersectPolygonNorm(Point{x: g.ballx, y: g.bally}, Point{x: g.targetx, y: g.targety},
+			polygon) // Point{x:screenWidth/2.0, y:0}, Point{x:screenWidth/2.0,y:screenHeight} )
 		if interp != nil {
-			v, i := ball(interp.src.x, interp.src.y, color.RGBA{0xff,0x00,0xff,0xff})
+			v, i := ball(interp.src.x, interp.src.y, color.RGBA{0xff, 0x00, 0xff, 0xff})
 			screen.DrawTriangles(v, i, src, nil)
 
 			v, i = dotline(float64(interp.src.x), float64(interp.src.y), float64(interp.src.x+15.0*interp.dst.x), float64(interp.src.y+15.0*interp.dst.y), color.RGBA{0x0, 0x40, 0xa0, 0xff})
 			screen.DrawTriangles(v, i, src, nil)
 
-			newdir := interp.src.sub(Point{g.ballx,g.bally}).reflect(interp.dst)
+			newdir := interp.src.sub(Point{g.ballx, g.bally}).reflect(interp.dst)
 			v, i = dotline(float64(interp.src.x), float64(interp.src.y), float64(interp.src.x+newdir.x), float64(interp.src.y+newdir.y), color.RGBA{0x0, 0x80, 0xa0, 0xff})
 			screen.DrawTriangles(v, i, src, nil)
 		}
@@ -147,7 +164,7 @@ func main() {
 	}
 
 	ebiten.SetWindowSize(screenWidth, screenHeight)
-        ebiten.SetFullscreen(true)
+	ebiten.SetFullscreen(true)
 	ebiten.SetWindowTitle("Ray casting and shadows (Ebiten demo)")
 	if err := ebiten.RunGame(g); err != nil {
 		log.Fatal(err)
