@@ -5,6 +5,8 @@ import (
 	//	"fmt"
 )
 
+const epsilon = 1e-8
+
 type Point struct {
 	x float64
 	y float64
@@ -140,13 +142,12 @@ func intersection(p1 Point, p2 Point, p3 Point, p4 Point) *Point {
 
 	// fmt.Println(pre,post,x,y)
 
-	const eps = 1e-8
 
 	// Check if the x and y coordinates are within both lines
-	if x < math.Min(p1.x, p2.x)-eps || x > math.Max(p1.x, p2.x)+eps || x < math.Min(p3.x, p4.x)-eps || x > math.Max(p3.x, p4.x)+eps {
+	if x < math.Min(p1.x, p2.x)-epsilon || x > math.Max(p1.x, p2.x)+epsilon || x < math.Min(p3.x, p4.x)-epsilon || x > math.Max(p3.x, p4.x)+epsilon {
 		return nil
 	}
-	if y < math.Min(p1.y, p2.y)-eps || y > math.Max(p1.y, p2.y)+eps || y < math.Min(p3.y, p4.y)-eps || y > math.Max(p3.y, p4.y)+eps {
+	if y < math.Min(p1.y, p2.y)-epsilon || y > math.Max(p1.y, p2.y)+epsilon || y < math.Min(p3.y, p4.y)-epsilon || y > math.Max(p3.y, p4.y)+epsilon {
 		return nil
 	}
 

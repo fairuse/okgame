@@ -140,6 +140,16 @@ func (g *Game) Draw(screen *ebiten.Image) {
 			newdir := interp.src.sub(Point{g.ballx, g.bally}).reflect(interp.dst)
 			v, i = dotline(float64(interp.src.x), float64(interp.src.y), float64(interp.src.x+newdir.x), float64(interp.src.y+newdir.y), color.RGBA{0x0, 0x80, 0xa0, 0xff})
 			screen.DrawTriangles(v, i, src, nil)
+
+			newtarget := interp.src.add(newdir)
+			newball := interp.src.add(newdir.mul(epsilon))
+
+			interp, _ := level.findHit(newball, newtarget)
+			if interp != nil {
+				newdir := interp.src.sub(newball).reflect(interp.dst)
+				v, i = dotline(float64(interp.src.x), float64(interp.src.y), float64(interp.src.x+newdir.x), float64(interp.src.y+newdir.y), color.RGBA{0xff, 0x0, 0x0, 0xff})
+				screen.DrawTriangles(v, i, src, nil)
+			}
 		}
 
 		v, i = ball(float64(g.targetx), float64(g.targety), color.RGBA{0xa0, 0xa0, 0xa0, 0xff})
