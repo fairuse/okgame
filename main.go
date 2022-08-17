@@ -8,7 +8,7 @@ import (
 	"image"
 	"image/color"
 	"log"
-//	"fmt"
+	//	"fmt"
 	"math"
 )
 
@@ -22,10 +22,10 @@ func init() {
 	emptyImage.Fill(color.White)
 	level = Level{}
 	polygon := makeNGon(Point{x: screenWidth / 2.0, y: screenHeight / 2.0}, 50.0, 5)
-	level.add(Obstacle{geom:polygon,enabled:true,color:color.RGBA{255,255,0,255} })
+	level.add(Obstacle{geom: polygon, enabled: true, color: color.RGBA{255, 255, 0, 255}})
 
 	polygon = makeNGon(Point{x: screenWidth / 4.0, y: screenHeight / 2.0}, 20.0, 6)
-	level.add(Obstacle{geom:polygon,enabled:true,color:color.RGBA{255,255,0,255} })
+	level.add(Obstacle{geom: polygon, enabled: true, color: color.RGBA{255, 255, 0, 255}})
 	//fmt.Println("LEVEL",level)
 	//v,i := level.draw()
 	//fmt.Println(v)
@@ -113,7 +113,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	src := emptyImage.SubImage(image.Rect(1, 1, 2, 2)).(*ebiten.Image)
 
 	if true {
-		v,i := level.draw()
+		v, i := level.draw()
 		screen.DrawTriangles(v, i, src, nil)
 	}
 
