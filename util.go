@@ -18,7 +18,7 @@ func (p Point) length() float64 {
 
 func (p Point) normalized() Point {
 	l := p.length()
-	if l==0 {
+	if l == 0 {
 		return Point{}
 	}
 	return Point{x: p.x / l, y: p.y / l}
