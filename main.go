@@ -30,7 +30,7 @@ func init() {
 	}
 
 	for i := 0.0; i < 2*3.1415; i += 0.4 {
-		polygon := makeNGon(Point{x: screenWidth * 0.5 + screenHeight * 0.4 *math.Sin(i), y: screenHeight * (0.5 + 0.4*math.Cos(i))}, 15.0, 4)
+		polygon := makeNGon(Point{x: screenWidth*0.5 + screenHeight*0.4*math.Sin(i), y: screenHeight * (0.5 + 0.4*math.Cos(i))}, 15.0, 4)
 		level.add(Obstacle{geom: polygon, enabled: true, color: color.RGBA{255, 255, 0, 255}})
 	}
 	//fmt.Println("LEVEL",level)
