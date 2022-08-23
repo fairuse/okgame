@@ -12,8 +12,8 @@ import (
 	"math"
 )
 
-const screenWidth = 768
-const screenHeight = 512
+const screenWidth = 1366
+const screenHeight = 768
 
 var emptyImage = ebiten.NewImage(3, 3)
 var level Level
@@ -30,7 +30,7 @@ func init() {
 	}
 
 	for i := 0.0; i < 2*3.1415; i += 0.4 {
-		polygon := makeNGon(Point{x: screenWidth * (0.5 + 0.4*math.Sin(i)), y: screenHeight * (0.5 + 0.4*math.Cos(i))}, 15.0, 4)
+		polygon := makeNGon(Point{x: screenWidth * 0.5 + screenHeight * 0.4 *math.Sin(i), y: screenHeight * (0.5 + 0.4*math.Cos(i))}, 15.0, 4)
 		level.add(Obstacle{geom: polygon, enabled: true, color: color.RGBA{255, 255, 0, 255}})
 	}
 	//fmt.Println("LEVEL",level)
@@ -177,7 +177,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		//interp := intersectPolygonNorm(Point{x: g.ballx, y: g.bally}, Point{x: g.targetx, y: g.targety},
 		//	polygon) // Point{x:screenWidth/2.0, y:0}, Point{x:screenWidth/2.0,y:screenHeight} )
 		if interp != nil {
-			v, i := ball(interp.src.x, interp.src.y, color.RGBA{0xff, 0x00, 0xff, 0xff})
+			v, i := mkBallGeom(interp.src.x, interp.src.y, color.RGBA{0xff, 0x00, 0xff, 0xff})
 			screen.DrawTriangles(v, i, src, nil)
 
 			v, i = dotline(float64(interp.src.x), float64(interp.src.y), float64(interp.src.x+15.0*interp.dst.x), float64(interp.src.y+15.0*interp.dst.y), color.RGBA{0x0, 0x40, 0xa0, 0xff})
@@ -198,12 +198,12 @@ func (g *Game) Draw(screen *ebiten.Image) {
 			}
 		}
 
-		v, i = ball(float64(g.targetx), float64(g.targety), color.RGBA{0xa0, 0xa0, 0xa0, 0xff})
+		v, i = mkBallGeom(float64(g.targetx), float64(g.targety), color.RGBA{0xa0, 0xa0, 0xa0, 0xff})
 		screen.DrawTriangles(v, i, src, nil)
 
 	}
 
-	v, i := ball(float64(g.ballx), float64(g.bally), color.RGBA{0xff, 0xff, 0xff, 0xff})
+	v, i := mkBallGeom(float64(g.ballx), float64(g.bally), color.RGBA{0xff, 0xff, 0xff, 0xff})
 	screen.DrawTriangles(v, i, src, nil)
 
 	ebitenutil.DebugPrintAt(screen, "Click and drag to launch ball", 0, 0)

@@ -100,7 +100,7 @@ func intersectPolygon(p1 Point, p2 Point, p Polygon) *Point {
 	return closestInter
 }
 
-// note: only returns the closest interesction point to p1
+// note: only returns the closest interesction point to p1 (and the normal at the intersection point)
 func intersectPolygonNorm(p1 Point, p2 Point, p Polygon) *Line {
 	var closestInter *Line
 	// fmt.Println("--")

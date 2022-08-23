@@ -7,6 +7,17 @@ import (
 	"math"
 )
 
+type Ball struct {
+	pos Point
+	dir Point
+	col color.RGBA
+}
+
+func (b *Ball) step() {
+	// TODO: how to handle intersection code... is a ball _in_ a level, or does it simply access it?
+	// or does the level step the balls itself?
+}
+
 func render(p Polygon, col color.RGBA) (vertices []ebiten.Vertex, indices []uint16) {
 	cr := float32(col.R) / 0xff
 	cg := float32(col.G) / 0xff
@@ -97,7 +108,11 @@ func dotline(sx float64, sy float64, tx float64, ty float64, col color.RGBA) (ve
 
 }
 
-func ball(px float64, py float64, col color.RGBA) (vertices []ebiten.Vertex, indices []uint16) {
+func (b *Ball) mkGeom() (verties []ebiten.Vertex, indices []uint16) {
+	return mkBallGeom(b.pos.x, b.pos.y, b.col)
+}
+
+func mkBallGeom(px float64, py float64, col color.RGBA) (vertices []ebiten.Vertex, indices []uint16) {
 	const MAXSEG = 64
 	const r = 4.0
 
