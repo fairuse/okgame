@@ -26,12 +26,12 @@ func init() {
 
 	for nr := 0; nr < 10; nr++ {
 		polygon := makeNGon(Point{x: screenWidth / 2.0, y: screenHeight / 2.0}, 100-5.0*float64(nr), 100)
-		level.add(Obstacle{geom: polygon, enabled: true, color: color.RGBA{uint8(255 - nr*15), uint8(255 - nr*20), 0, 255}})
+		level.add(Obstacle{geom: polygon, enabled: true, color: color.RGBA{R: uint8(255 - nr*15), G: uint8(255 - nr*20), A: 255}})
 	}
 
 	for i := 0.0; i < 2*3.1415; i += 0.4 {
 		polygon := makeNGon(Point{x: screenWidth*0.5 + screenHeight*0.4*math.Sin(i), y: screenHeight * (0.5 + 0.4*math.Cos(i))}, 15.0, 4)
-		level.add(Obstacle{geom: polygon, enabled: true, color: color.RGBA{255, 255, 0, 255}})
+		level.add(Obstacle{geom: polygon, enabled: true, color: color.RGBA{R: 255, G: 255, A: 255}})
 	}
 	//fmt.Println("LEVEL",level)
 	//v,i := level.draw()
@@ -144,7 +144,7 @@ func (g *Game) Update() error {
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
-	screen.Fill(color.RGBA{0x30, 0x30, 0x50, 0xff})
+	screen.Fill(color.RGBA{R: 0x30, G: 0x30, B: 0x50, A: 0xff})
 	src := emptyImage.SubImage(image.Rect(1, 1, 2, 2)).(*ebiten.Image)
 
 	if true {
@@ -159,12 +159,12 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	}
 	for nr, trailpos := range g.trail {
 		polygon := makeNGon(trailpos, 5.0*float64(nr)/float64(maxtrail+1), 4)
-		v, i := render(polygon, color.RGBA{0xff, 0xff, 0xff, uint8(0xa0 * nr / maxtrail)})
+		v, i := render(polygon, color.RGBA{R: 0xff, G: 0xff, B: 0xff, A: uint8(0xa0 * nr / maxtrail)})
 		screen.DrawTriangles(v, i, src, nil)
 	}
 
 	if g.positioning {
-		v, i := dotline(float64(g.ballx), float64(g.bally), float64(g.targetx), float64(g.targety), color.RGBA{0x80, 0x40, 0xa0, 0xff})
+		v, i := dotline(g.ballx, g.bally, g.targetx, g.targety, color.RGBA{R: 0x80, G: 0x40, B: 0xa0, A: 0xff})
 		screen.DrawTriangles(v, i, src, nil)
 
 		// polygon := makeNGon(Point{x: screenWidth / 2.0, y: screenHeight / 2.0}, 50.0, 5)
@@ -177,14 +177,14 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		//interp := intersectPolygonNorm(Point{x: g.ballx, y: g.bally}, Point{x: g.targetx, y: g.targety},
 		//	polygon) // Point{x:screenWidth/2.0, y:0}, Point{x:screenWidth/2.0,y:screenHeight} )
 		if interp != nil {
-			v, i := mkBallGeom(interp.src.x, interp.src.y, color.RGBA{0xff, 0x00, 0xff, 0xff})
+			v, i := mkBallGeom(interp.src.x, interp.src.y, color.RGBA{R: 0xff, B: 0xff, A: 0xff})
 			screen.DrawTriangles(v, i, src, nil)
 
-			v, i = dotline(float64(interp.src.x), float64(interp.src.y), float64(interp.src.x+15.0*interp.dst.x), float64(interp.src.y+15.0*interp.dst.y), color.RGBA{0x0, 0x40, 0xa0, 0xff})
+			v, i = dotline(interp.src.x, interp.src.y, interp.src.x+15.0*interp.dst.x, interp.src.y+15.0*interp.dst.y, color.RGBA{G: 0x40, B: 0xa0, A: 0xff})
 			screen.DrawTriangles(v, i, src, nil)
 
 			newdir := interp.src.sub(Point{g.ballx, g.bally}).reflect(interp.dst)
-			v, i = dotline(float64(interp.src.x), float64(interp.src.y), float64(interp.src.x+newdir.x), float64(interp.src.y+newdir.y), color.RGBA{0x0, 0x80, 0xa0, 0xff})
+			v, i = dotline(interp.src.x, interp.src.y, interp.src.x+newdir.x, interp.src.y+newdir.y, color.RGBA{G: 0x80, B: 0xa0, A: 0xff})
 			screen.DrawTriangles(v, i, src, nil)
 
 			newtarget := interp.src.add(newdir.normalized().mul(screenWidth + screenHeight))
@@ -193,17 +193,17 @@ func (g *Game) Draw(screen *ebiten.Image) {
 			interp, _ := level.findHit(newball, newtarget)
 			if interp != nil {
 				newdir := interp.src.sub(newball).reflect(interp.dst)
-				v, i = dotline(float64(interp.src.x), float64(interp.src.y), float64(interp.src.x+newdir.x), float64(interp.src.y+newdir.y), color.RGBA{0xff, 0x0, 0x0, 0xff})
+				v, i = dotline(interp.src.x, interp.src.y, interp.src.x+newdir.x, interp.src.y+newdir.y, color.RGBA{R: 0xff, A: 0xff})
 				screen.DrawTriangles(v, i, src, nil)
 			}
 		}
 
-		v, i = mkBallGeom(float64(g.targetx), float64(g.targety), color.RGBA{0xa0, 0xa0, 0xa0, 0xff})
+		v, i = mkBallGeom(g.targetx, g.targety, color.RGBA{R: 0xa0, G: 0xa0, B: 0xa0, A: 0xff})
 		screen.DrawTriangles(v, i, src, nil)
 
 	}
 
-	v, i := mkBallGeom(float64(g.ballx), float64(g.bally), color.RGBA{0xff, 0xff, 0xff, 0xff})
+	v, i := mkBallGeom(g.ballx, g.bally, color.RGBA{R: 0xff, G: 0xff, B: 0xff, A: 0xff})
 	screen.DrawTriangles(v, i, src, nil)
 
 	ebitenutil.DebugPrintAt(screen, "Click and drag to launch ball", 0, 0)
